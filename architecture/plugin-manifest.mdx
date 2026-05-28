@@ -1,0 +1,50 @@
+---
+title: "Plugin manifest"
+description: "Manifest shape for core plugins, including lazy activation metadata."
+icon: "file-code"
+---
+
+Each plugin ships a manifest declaring its identity, supported platforms, capabilities, dependencies, and **lazy activation triggers**.
+
+## Example manifest
+
+```json
+{
+  "id": "zorid.core.data-views",
+  "name": "Data Views",
+  "version": "0.1.0",
+  "apiLevel": 1,
+  "platforms": ["desktop", "mobile"],
+  "capabilities": {
+    "required": ["workspace.views", "metadata.read", "objects.read"],
+    "optional": []
+  },
+  "dependsOn": {
+    "zorid.core.fields": "^0.1.0"
+  },
+  "activation": {
+    "commands": ["data-views.open"],
+    "viewTypes": ["table", "list"],
+    "objectTypes": ["zbase"],
+    "events": []
+  },
+  "main": "./dist/index.js"
+}
+```
+
+## Lazy activation
+
+The plugin host registers **placeholder handlers** for the triggers declared in `activation`. When any trigger fires (e.g. user runs `data-views.open`, opens a `.zbase` view, or fires a subscribed event), the host:
+
+1. Validates platform \+ capabilities \+ dependencies.
+2. Dynamically imports `main`.
+3. Calls `activate(ctx)` so the plugin can register real handlers.
+4. Replaces the placeholder and replays the original trigger.
+
+## API level
+
+`apiLevel` mirrors Neovim's API compatibility metadata. The plugin host refuses to load plugins built against an incompatible API level and surfaces a clear reason in the plugin manager.
+
+<Card title="Source" icon="github" href="https://github.com/zorid-app/Zorid/blob/main/docs/architecture/plugin-manifest.md">
+  Full plugin manifest spec on GitHub.
+</Card>

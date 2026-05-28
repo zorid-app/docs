@@ -1,0 +1,53 @@
+---
+title: "Vision"
+description: "Zorid's root concept: a modern, extensible, structured Markdown editor."
+icon: "lightbulb"
+---
+
+## Project goal
+
+An open-source, modern, cross-platform Markdown editor with **first-class support for structured data**:
+
+- Fields on notes (frontmatter).
+- Views — kanban, calendar, table, timeline — with group, sort, and filter.
+- Near-feature-parity with Obsidian for core Markdown editing.
+
+## Architecture requirements
+
+- Very modular design for parallel development.
+- Lazy load everything possible (inspired by `lazy.nvim`).
+- Every behavior should be attachable and extensible via plugins.
+- Everything modular and togglable, except very-core kernel pieces.
+- Performance is critical.
+- SQLite indexing under `.zorid/` in the user's vault.
+- Desktop = Electron. Mobile = Capacitor with custom mobile UI.
+
+## P0 features
+
+- Automatic backup, timeline history
+- All Obsidian-like Markdown editing features (backlinks, embeds, wikilinks)
+- Tabs
+- Fields \+ SQLite indexing
+- Command palette
+- Search
+- Status bar
+
+## P1 features
+
+- Well-integrated sync (Google Drive, S3-compatible, newest-wins)
+- Image viewer
+- Markdown display customization (line spacing, fonts)
+- Tags
+- File watcher with automatic index updates
+- Calendar (two-way sync, CalDAV)
+
+## P2 features
+
+- Excalidraw, Canvas
+- PDF view & annotation
+- Notion-style views
+- Hotkeys for everything (configurable)
+
+<Card title="Source" icon="github" href="https://github.com/zorid-app/Zorid/blob/main/docs/product/zorid.md">
+  Read the original vision doc.
+</Card>

@@ -1,47 +1,126 @@
----
-title: "Quickstart"
-description: "Begin with a guide on the fastest path to a successful outcome"
----
-
-Describe how someone begins using your product. What is the first thing they need to do? Are there any prerequisites?
-
-A quickstart should take someone from zero to using your product. They'll get a quick win and a sense of what they can accomplish.
+Zorid is a pnpm monorepo with Electron (desktop) and Capacitor (mobile) shells over a set of shared Vue 3 \+ TypeScript packages. In v0, the focus is the desktop experience.
 
 ## Prerequisites
 
-Before you begin, you must have:
+- **Node.js** 20\+
+- **pnpm** 9\+
+- **Git**
+- A local folder to use as your **vault** (any directory of Markdown files)
 
-- Requirement one (for example, Node.js 18+, a free account, an API key)
-- Requirement two (for example, a compatible device, a compatible browser, a compatible operating system)
-
-## Get started
+## Clone and install
 
 <Steps>
-  <Step title="Install">
-    Describe how to install your product or sign up.
-
+  <Step title="Clone the repository">
     ```bash
-    npm install your-package
+    git clone https://github.com/zorid-app/Zorid.git
+    cd Zorid
     ```
   </Step>
-  <Step title="Configure">
-    Describe any setup or configuration needed before first use.
-
+  <Step title="Install dependencies">
     ```bash
-    your-cli init
+    pnpm install
     ```
   </Step>
-  <Step title="Run it">
-    Show the first thing a user does to see it working.
-
+  <Step title="Run the desktop app">
     ```bash
-    your-cli start
+    pnpm --filter @zorid/desktop dev
+    ```
+
+    The Electron window opens and prompts you to select a folder to use as your vault.
+  </Step>
+  <Step title="Run tests (optional)">
+    ```bash
+    pnpm test
     ```
   </Step>
 </Steps>
 
-<Tip>
-  Give people a way to get help. This could be a link to a support page, a chat with a customer support agent, or a forum for your product.
+## Your first typed note
 
-  Example: Need help? Reach out to us at [support@yourcompany.com](mailto:support@yourcompany.com).
-</Tip>
+Once the app is running and a vault is open, create a Type and a typed note.
+
+<Steps>
+  <Step title="Define a Type">
+    Create `.zorid/types/task.ztype` in your vault:
+
+    ```yaml
+    schemaVersion: 1
+    id: task
+    name: Task
+    
+    fields:
+      status:
+        type: select
+        options: [todo, doing, done]
+        default: todo
+      priority:
+        type: select
+        options: [low, medium, high]
+        default: medium
+      due:
+        type: date
+    ```
+  </Step>
+  <Step title="Create a typed note">
+    Create `Tasks/Fix sync conflict UI.md`:
+
+    ```md
+    ---
+    zorid:
+      type: task
+    status: todo
+    priority: high
+    due: 2026-06-01
+    ---
+    # Fix sync conflict UI
+    ```
+
+    Zorid renders the `Task` field group above the note body.
+  </Step>
+  <Step title="Embed a view">
+    Create `.zorid/views/tasks.zbase`:
+
+    ```yaml
+    schemaVersion: 1
+    id: tasks
+    name: Tasks
+    
+    views:
+      - type: table
+        name: Table
+        filters:
+          and:
+            - zorid.type == "task"
+            - status != "done"
+        sort:
+          - property: due
+            direction: ASC
+    ```
+
+    Embed it from any Markdown note:
+
+    ```md
+    ![[.zorid/views/tasks.zbase]]
+    ```
+  </Step>
+</Steps>
+
+## Next steps
+
+<CardGroup cols={2}>
+  <Card title="Storage model" icon="folder-tree" href="/architecture/storage-model">
+    Where Markdown, `.zbase`, `.ztype`, and the SQLite index live.
+  </Card>
+
+  <Card title="Fields and Types" icon="table-list" href="/architecture/fields-and-types">
+    How frontmatter fields and `.ztype` schemas work together.
+  </Card>
+
+  <Card title="`.zbase` schema" icon="filter" href="/architecture/zbase-schema">
+    View schema and the v0 filter grammar.
+  </Card>
+
+  <Card title="Core plugins" icon="puzzle-piece" href="/core-plugins/contract">
+    What ships in the box for v0.
+  </Card>
+</CardGroup>

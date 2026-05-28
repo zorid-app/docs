@@ -1,0 +1,66 @@
+---
+title: "Package & API design"
+description: "Monorepo package boundaries, public Plugin API surface, and core Platform APIs."
+icon: "boxes-stacked"
+---
+
+Zorid is a **pnpm monorepo** organized into apps, shared packages, core plugins, and (later) Rust crates.
+
+## Repository layout
+
+```text
+zorid/
+  apps/
+    desktop/        # Electron main / preload / renderer
+    mobile/         # Capacitor + Vue
+
+  packages/
+    app-kernel/     # Service registry, event bus, lifecycle, command/settings registries
+    vault/          # VaultStorage, VaultWatcher, paths, vault profiles
+    workspace/      # Panes, tabs, layout tree, view registry
+    editor/         # CodeMirror integration and EditorAPI
+    metadata/       # MetadataAPI, SearchAPI, fields/filter helpers
+    object-store/   # Canonical structured file helpers (.zbase, .ztype)
+    db/             # SQLite cache/index adapters and migrations
+    index-api/      # IndexEngine contract
+    indexer-js/     # JS reference index implementation
+    index-worker/   # Worker batching and engine bridge
+    plugin-api/     # Manifest, PluginContext, public API types
+    plugin-host/    # Plugin registry, lazy triggers, loader, permissions
+    sync/           # SyncProvider interfaces and later sync engine
+    ui-vue/         # Shared Vue design system
+    desktop-shell/  # Desktop layout shell
+    mobile-shell/   # Mobile shell, sheets, gestures, haptics
+    shared/         # Shared utilities, schemas, errors
+
+  plugins/core/
+    file-explorer/ search/ backlinks/ outline/ tags/ status-bar/ fields/ data-views/
+
+  crates/
+    index-core/     # Rust parser/index core (later)
+    index-wasm/     # WASM bindings (later)
+```
+
+## Import direction
+
+```text
+apps -> shell packages -> platform packages -> shared
+plugins/core -> plugin-api + platform APIs
+platform packages must not import Vue shell packages
+third-party plugin API must not expose Vue internals
+```
+
+## Public Plugin API
+
+The `plugin-api` package defines the **stable, framework-neutral surface** plugins build against:
+
+- Manifest schema (`platforms`, `capabilities`, `dependsOn`).
+- `PluginContext` with `register.*` disposables.
+- Typed APIs: `vault`, `workspace`, `editor`, `metadata`, `objects`, `search`, `storage`.
+- View renderer contract: `mount(container, props, ctx) -> dispose`.
+
+Core plugins dogfood these APIs. Generic `ctx.internal` is avoided as a normal pattern — if a core plugin needs private access, document the missing API and either add a narrow Platform API or a temporary explicit bridge.
+
+<Card title="Source" icon="github" href="https://github.com/zorid-app/Zorid/blob/main/docs/architecture/package-api-design.md">
+  Full package & API design on GitHub.
+</Card>

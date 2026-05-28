@@ -1,0 +1,33 @@
+---
+title: "Plugin power & shell UI extensibility"
+description: "How far plugins can reach into the shell, and which UI surfaces become extension points."
+icon: "plug"
+---
+
+Zorid's long-term goal is for plugins to be **as powerful as Obsidian or Neovim plugins** — without requiring them to depend on Vue or shell internals.
+
+v0 ships a minimal but stable set of framework-neutral UI primitives. v1 expands this surface area.
+
+## v0 primitives
+
+- Commands and keymaps.
+- Settings schemas and editors.
+- Workspace views (`mount(container, props, ctx)`) for sidebars, main area, and `.zbase` renderers.
+- Status bar items.
+- Notices and modals.
+- Markdown post-processors and CodeMirror extensions.
+- CSS variables and design tokens.
+
+## v1 candidates
+
+- Custom menus (context, file menu, editor menu, tab menu).
+- Custom ribbons / activity bar items.
+- Custom command palette result sources.
+- Custom property editors for the Fields plugin.
+- Custom side-panel layouts.
+- Theme tokens and dark/light scheming hooks.
+- Plugin-to-plugin public API contracts via `ctx.plugins.getApi("zorid.core.fields")`.
+
+<Card title="Source" icon="github" href="https://github.com/zorid-app/Zorid/blob/main/docs/product/v1-features/plugin-power-and-shell-ui-extensibility.md">
+  Full v1 design notes on GitHub.
+</Card>

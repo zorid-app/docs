@@ -1,0 +1,51 @@
+---
+title: "Index schema"
+description: "SQLite tables and indexing algorithm for the derived metadata cache."
+icon: "database"
+---
+
+Zorid stores derived metadata in `.zorid/index/index.sqlite`. The index is **rebuildable at any time** from canonical Markdown, `.zbase`, and `.ztype` files.
+
+## Tables (v0)
+
+| Table | Purpose |
+| --- | --- |
+| `files` | One row per Markdown file: path, mtime, hash, title, frontmatter blob |
+| `fields` | Normalized field values per file, with inferred and declared types |
+| `tags` | Tag occurrences and counts |
+| `links` | Wiki/Markdown link edges (source path → target path or unresolved target) |
+| `embeds` | Embedded paths (including `.zbase`) per file |
+| `headings` | Outline entries with depth and offset |
+| `types` | Resolved `.ztype` definitions and field schemas |
+| `views` | `.zbase` base \+ view metadata; renderer config stored as `config_json` |
+
+## Indexing flow
+
+```mermaid
+sequenceDiagram
+  participant Watcher as VaultWatcher
+  participant Vault as VaultStorage
+  participant Worker as IndexWorker
+  participant Engine as IndexEngine
+  participant DB as index.sqlite
+  participant Events as EventBus
+  participant UI as Shell/Core Plugins
+
+  Watcher->>Events: vault:changed(paths)
+  Events->>Worker: schedule index batch
+  Worker->>Vault: read changed Markdown files
+  Vault-->>Worker: file contents + metadata
+  Worker->>Engine: indexFiles(batch)
+  Engine-->>Worker: records, links, tags, fields, object refs
+  Worker->>DB: write derived records
+  Worker->>Events: metadata:indexUpdated(paths)
+  Events->>UI: refresh selected UI slices
+```
+
+## IndexEngine contract
+
+`packages/index-api` defines the `IndexEngine` interface. `packages/indexer-js` provides the v0 reference implementation. `crates/index-core` \+ `crates/index-wasm` are reserved for a later Rust acceleration layer behind the same contract.
+
+<Card title="Source" icon="github" href="https://github.com/zorid-app/Zorid/blob/main/docs/architecture/index-schema.md">
+  Full index schema and migration rules on GitHub.
+</Card>

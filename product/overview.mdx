@@ -1,0 +1,79 @@
+---
+title: "Overview"
+description: "Product direction, settled decisions, and the v0 milestone."
+icon: "compass"
+---
+
+Zorid is a local-first, cross-platform Markdown workspace with first-class structured data. It aims to feel as extensible as Obsidian and Neovim while making fields, views, and rich embedded blocks core differentiators instead of add-ons.
+
+## Primary goals
+
+- Markdown files remain the main human-readable note format.
+- Structured views can be embedded through `.zbase` files without making Markdown messy.
+- The app is highly modular and lazy-loaded.
+- Core features are bundled as official core plugins where appropriate.
+- Third-party plugins are designed for from the beginning, but only core plugins are enabled in v0.
+- Desktop uses normal folder vaults. Mobile uses app-private vaults.
+- v0 is single-user / offline-first. Offline concurrent editing is a next-stage goal.
+
+## Settled decisions
+
+| Area | Decision |
+| --- | --- |
+| Repository model | Monorepo |
+| Frontend framework | Vue 3 \+ TypeScript |
+| Build tool | Vite |
+| Package manager | pnpm |
+| Desktop runtime | Electron |
+| Mobile runtime | Capacitor |
+| Editor | CodeMirror 6 |
+| Storage | Markdown \+ `.zbase` \+ `.ztype`; SQLite for derived index |
+| Type model | Fields in Markdown frontmatter; optional `.ztype` Types via `zorid.type` |
+| Index architecture | `IndexEngine` interface; JS reference impl first; Rust/WASM shell present |
+| Command palette & Settings UI | Shell features, not plugins |
+| Core bundled features | `plugins/core/*` |
+| API versioning | Neovim-inspired API level / compatibility metadata |
+| Plugin platform support | Manifest-declared desktop/mobile \+ required/optional capabilities |
+
+## Neovim-inspired layering
+
+```text
+Kernel
+  lifecycle / service registry / event bus / commands / settings / plugin host
+
+Platform APIs
+  vault / workspace / editor / metadata / search / storage / object APIs
+
+Shell
+  layout / command palette / settings / plugin manager
+
+Core plugins
+  official bundled features built on Platform APIs
+
+Third-party plugins (later)
+  external ecosystem using the stable public Plugin API
+```
+
+> Build a small programmable core with stable extension points, then layer official and community features on top.
+
+## v0 milestone
+
+v0 is complete when Zorid can:
+
+- build from a pnpm monorepo;
+- run a desktop-first Electron app against a normal folder vault;
+- keep a mobile skeleton compatible with app-private vaults;
+- create, open, edit, and save Markdown notes via CodeMirror;
+- navigate files with the file explorer; open multiple tabs/panes on desktop;
+- run command palette actions and edit shell settings;
+- index Markdown metadata into SQLite;
+- extract fields from frontmatter; define `.ztype` Types; render typed field boxes;
+- embed `.zbase` views in Markdown with `![[path/to/base.zbase]]`;
+- render `table` and `list` view types;
+- search indexed content; show backlinks, tags, outline, and status info;
+- lazy-load core plugin surfaces where practical;
+- rebuild the derived index from canonical files at any time.
+
+<Card title="Read the full overview on GitHub" icon="github" href="https://github.com/zorid-app/Zorid/blob/main/docs/product/overview.md">
+  Includes detailed diagrams (layer, storage, indexing) and the desktop vs mobile split.
+</Card>

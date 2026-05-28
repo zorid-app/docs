@@ -1,0 +1,24 @@
+---
+title: "Frontend"
+description: "Vue 3 + Vite + Electron frontend handoff."
+icon: "browser"
+---
+
+Zorid's frontend is **Vue 3 \+ TypeScript**, built with **Vite**, and packaged for desktop via **Electron**. The mobile shell uses **Capacitor** wrapping the same Vue renderer.
+
+## Key choices
+
+- **Vue 3 \+ `<script setup>`** for shell, core plugins, and the design system (`packages/ui-vue`).
+- **Vite** for fast renderer dev/build.
+- **CodeMirror 6** as the Markdown editor, wrapped by `packages/editor`.
+- **Electron** main / preload / renderer split for the desktop app.
+- **Capacitor** for mobile, with app-private vault storage.
+- **Framework-agnostic plugin UI**: public plugin APIs do not require Vue. Plugins can use vanilla DOM, Canvas, WebGL, Vue, Svelte, or Solid via `mount(container, props, ctx)` view renderers.
+
+## Shell vs platform
+
+Shell packages (`desktop-shell`, `mobile-shell`, `ui-vue`) own layout, panes, sheets, gestures, and the design system. Platform packages (`app-kernel`, `vault`, `workspace`, `editor`, `metadata`, `object-store`, `plugin-host`) are framework-neutral and must not import Vue shell internals.
+
+<Card title="Source" icon="github" href="https://github.com/zorid-app/Zorid/blob/main/docs/product/frontend.md">
+  Read the full frontend handoff on GitHub.
+</Card>
