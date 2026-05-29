@@ -1,0 +1,53 @@
+---
+title: "Neovim & lazy.nvim comparison"
+description: "What Zorid borrows from Neovim's core/runtime split and lazy.nvim's lazy loading."
+icon: "code-compare"
+---
+
+Zorid's architecture takes deliberate cues from **Neovim** and **lazy.nvim** without literally turning every feature into a plugin.
+
+## What Neovim gets right
+
+```text
+Core editor engine
+  commands / keymaps / autocmds / API / runtimepath
+
+Bundled standard plugins / runtime features
+  useful official features built on extension points
+
+External plugins
+  user-installed ecosystem
+```
+
+**Lesson Zorid copies:** a small, stable programmable core with clear extension points, then layer official and community features on top.
+
+## What Zorid _doesn't_ copy
+
+- Vimscript / Lua-only API surface — Zorid uses TypeScript \+ framework-neutral plugin UI.
+- Buffer-everywhere mental model — Zorid uses files-on-disk \+ a SQLite index.
+- Modal editing — not a Zorid concern.
+
+## What lazy.nvim gets right
+
+- Plugins declare **triggers** for activation: commands, file types, keymaps, events.
+- The plugin manager registers **placeholders** for those triggers and only loads the real plugin on first use.
+- Dependency graphs are explicit; load order is deterministic.
+
+## Zorid's lazy activation
+
+Zorid's plugin manifest declares activation triggers:
+
+```json
+"activation": {
+  "commands":   ["data-views.open"],
+  "viewTypes":  ["table", "list"],
+  "objectTypes":["zbase"],
+  "events":     []
+}
+```
+
+The plugin host registers placeholders, dynamically imports the plugin on first trigger, calls `activate(ctx)`, then replays the original action. See [Kernel & plugin host](/architecture/kernel-and-plugin-host) for the full sequence.
+
+<Card title="Source" icon="github" href="https://github.com/zorid-app/Zorid/blob/main/docs/architecture/neovim-lazy-comparison.md">
+  Full comparison and design rationale on GitHub.
+</Card>

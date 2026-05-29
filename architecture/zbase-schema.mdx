@@ -1,0 +1,160 @@
+---
+title: ".zbase schema & filter grammar"
+description: "View base schema and the v0 readable filter expression language."
+icon: "filter"
+---
+
+`.zbase` files define ordered **views** over Markdown files and their indexed metadata. They are canonical, human-readable YAML and can be embedded from Markdown.
+
+```md
+![[.zorid/views/tasks.zbase]]
+![[Dashboards/tasks.zbase]]
+```
+
+## v0 `.zbase` schema
+
+```yaml
+schemaVersion: 1
+id: tasks
+name: Tasks
+
+views:
+  - id: table
+    type: table
+    name: Table
+    filters:
+      and:
+        - zorid.type == "task"
+        - status != "done"
+    sort:
+      - property: due
+        direction: ASC
+    groupBy:
+      property: status
+      direction: ASC
+
+  - id: list
+    type: list
+    name: List
+    filters:
+      and:
+        - zorid.type == "task"
+```
+
+### Top-level fields
+
+| Field | Required | Notes |
+| --- | --- | --- |
+| `schemaVersion` | yes | v0 supports `1` |
+| `id` | yes | unique base ID, lowercase recommended |
+| `name` | yes | display name |
+| `views` | yes | one or more views |
+| `description` | no | help text |
+
+### View fields
+
+| Field | Required | Notes |
+| --- | --- | --- |
+| `type` | yes | core readable type or plugin namespaced type |
+| `name` | yes | display name |
+| `filters` | yes | filter tree |
+| `id` | no | generated from name if missing |
+| `sort` | no | ordered sort specs |
+| `groupBy` | no | grouping spec |
+
+View ID generation: lowercase slug from name, suffixed on conflict (`table`, `table-2`).
+
+## Core view types
+
+```text
+table list kanban calendar timeline
+```
+
+v0 implementation scope: **`table`** and **`list`**. Others remain valid schema values but show a "not implemented yet" placeholder until renderer support exists. Plugin renderers use namespaced types like `charts.bar`, `acme.matrix`.
+
+## Filter tree shape
+
+```yaml
+filters:
+  and:
+    - zorid.type == "task"
+    - status != "done"
+    - or:
+        - priority == "high"
+        - due <= today()
+```
+
+Allowed boolean keys: `and`, `or`, `not`. Empty `and` is true; empty `or` is false.
+
+## Expression grammar
+
+Filters are **Zorid-defined expression strings** parsed to AST. The parser must never use `eval`, `new Function`, or arbitrary JavaScript.
+
+```text
+expression  := unary | comparison | call | identifier
+unary       := '!' expression
+comparison  := operand operator operand
+operator    := '==' | '!=' | '>' | '>=' | '<' | '<=' | 'in' | 'contains'
+operand     := identifier | literal | list | call | member
+member      := identifier ('.' identifier)*
+call        := member '(' arguments? ')'
+literal     := string | number | boolean | null
+list        := '[' (literal (',' literal)*)? ']'
+```
+
+Strings prefer double quotes (`"task"`).
+
+## Operators and helpers
+
+Operators: `==`, `!=`, `>`, `>=`, `<`, `<=`, `in`, `contains`.
+
+**File helpers**
+
+```text
+file.hasTag("project")
+file.hasLink("Projects/Zorid")
+file.path.startsWith("Projects/")
+file.path.contains("Archive")
+file.name.contains("Meeting")
+```
+
+**Field helpers**
+
+```text
+status.exists()
+owners.contains("Casey")
+```
+
+**Date/time helpers**
+
+```text
+today()
+now()
+```
+
+## Special fields
+
+```text
+zorid.type   file.path   file.name   file.extension   file.title
+```
+
+## Missing field behavior
+
+```text
+missing field        == null
+missing.exists()     -> false
+missing == "x"       -> false
+missing != "x"       -> true
+missing > 1          -> false
+missing contains "x" -> false
+```
+
+## Validation
+
+- Invalid base schema → mark whole base invalid; show error; don't rewrite user file.
+- Invalid view or filter → mark that view invalid; other views remain usable.
+- Unknown plugin renderer type → placeholder; other views remain usable.
+
+<Card title="Source" icon="github" href="https://github.com/zorid-app/Zorid/blob/main/docs/architecture/zbase-schema-and-filter-grammar.md">
+  Full `.zbase` schema and filter grammar on GitHub.
+</Card>

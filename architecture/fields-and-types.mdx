@@ -1,0 +1,121 @@
+---
+title: "Fields and Types"
+description: "Frontmatter fields, .ztype schemas, and the Notion-like preservation rules."
+icon: "table-list"
+---
+
+Zorid fields are **frontmatter values stored directly in Markdown files**. **Types** are optional schemas that make a subset of those fields typed, visible, validated, and editor-enhanced.
+
+> Fields belong to the file. A Type controls which fields are active, grouped, typed, validated, and shown with richer editors.
+
+## Field syntax
+
+v0 field syntax is YAML frontmatter:
+
+```md
+---
+status: active
+priority: high
+due: 2026-06-01
+scheduledAt: 2026-06-01T14:30:00+08:00
+estimate: 2.5
+count: 12
+done: false
+tags: [project, writing]
+---
+```
+
+## Primitive inference
+
+Without a Type, Zorid still indexes fields and infers primitives from YAML:
+
+| YAML value | Inferred field type |
+| --- | --- |
+| `active` | string |
+| `12` | int |
+| `4.5` | float |
+| `true` / `false` | boolean |
+| `2026-06-01` | date |
+| `2026-06-01T14:30:00+08:00` | datetime |
+| `[a, b]` | list |
+| empty / null | null |
+
+## Types (`.ztype`)
+
+Default location: `.zorid/types/*.ztype`.
+
+```yaml
+schemaVersion: 1
+id: task
+name: Task
+
+fields:
+  status:
+    type: select
+    options: [todo, doing, done]
+    default: todo
+  priority:
+    type: select
+    options: [low, medium, high]
+    default: medium
+  due:
+    type: date
+  scheduledAt:
+    type: datetime
+  estimate:
+    type: float
+  count:
+    type: int
+  owners:
+    type: multiselect
+```
+
+Supported v0 types: `string`, `int`, `float`, `boolean`, `date`, `datetime`, `select`, `multiselect`.
+
+## Linking a file to a Type
+
+```md
+---
+zorid:
+  type: task
+status: todo
+priority: high
+due: 2026-06-01
+---
+# Fix sync conflict UI
+```
+
+`zorid.type` references the Type **ID**, not a path. The Type registry resolves IDs from `.zorid/types/*.ztype` and reports conflicts.
+
+## Notion-like preservation
+
+If a file removes its `zorid.type`:
+
+- Field values remain in frontmatter.
+- The `Task` field box disappears.
+- Fields become raw / ad-hoc metadata.
+- Data Views can still query them.
+
+If the file later re-adds `zorid.type: task`:
+
+- The `Task` field box reappears.
+- Previous field values are reused.
+- Select / date / multiselect editors and validation resume.
+
+## UI shape
+
+```text
+┌─ Task ─────────────────────────┐
+│ Status:   [todo ▼]          │
+│ Priority: [high ▼]          │
+│ Due:      [2026-06-01]      │
+└─────────────────────────────┘
+
+Other fields
+  source: GitHub
+  confidence: 0.8
+```
+
+<Card title="Source" icon="github" href="https://github.com/zorid-app/Zorid/blob/main/docs/architecture/fields-and-types.md">
+  Full Fields & Types spec on GitHub.
+</Card>

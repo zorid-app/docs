@@ -1,0 +1,50 @@
+---
+title: "Core plugin contract"
+description: "What every core plugin must implement: manifest, activation, disposables, and API discipline."
+icon: "file-contract"
+---
+
+All v0 core plugins live under `plugins/core/*` and must satisfy the **core plugin contract**.
+
+## Required
+
+1. **Manifest** with stable `id` (`zorid.core.<name>`), `apiLevel`, `platforms`, and `capabilities`.
+2. **Lazy activation** — declare command, view type, object type, or event triggers in `activation`. Don't do real work at module load.
+3. **`activate(ctx)`** entry point that registers commands, views, settings, and event handlers via lifecycle-owned `ctx.register.*` APIs.
+4. **Disposables only** — every contribution returns a disposable so the plugin host can clean up on unload.
+5. **Public API surface** — if other plugins consume the plugin (Fields, Data Views), expose a typed API and version it.
+
+## Forbidden
+
+- Reaching into other packages' internals or `ctx.internal` for normal features.
+- Importing Vue shell internals from a plugin.
+- Raw Electron / Node / Capacitor access — go through Platform APIs.
+- Registering globals or singletons that survive plugin disposal.
+
+## Skeleton
+
+```ts
+import type { PluginContext } from "@zorid/plugin-api";
+
+export function activate(ctx: PluginContext) {
+  ctx.register.command({
+    id: "my-plugin.open",
+    title: "My Plugin: Open",
+    run: () => ctx.workspace.openView({ type: "my-plugin.main" }),
+  });
+
+  ctx.register.viewRenderer({
+    type: "my-plugin.main",
+    mount(container, props, viewCtx) {
+      const root = document.createElement("div");
+      root.textContent = "Hello from my plugin";
+      container.appendChild(root);
+      return () => root.remove();
+    },
+  });
+}
+```
+
+<Card title="Source" icon="github" href="https://github.com/zorid-app/Zorid/blob/main/docs/core-plugins/00-core-plugin-contract.md">
+  Full core plugin contract on GitHub.
+</Card>

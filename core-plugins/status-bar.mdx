@@ -1,0 +1,34 @@
+---
+title: "Status bar"
+description: "Bottom status bar with word count, indexing state, and plugin-contributed items."
+icon: "bars-progress"
+---
+
+The status bar plugin owns the bottom status strip on desktop (and an equivalent strip on mobile when present) and provides a registration API for other plugins to contribute items.
+
+## v0 scope
+
+- Active file word count and character count.
+- Cursor position (line:column).
+- Indexing state indicator (idle / indexing / failed).
+- Vault path indicator.
+- Public registration API for plugin-contributed items (text, icon, click handler).
+
+## Public API
+
+```ts
+const statusBar = await ctx.plugins.getApi("zorid.core.status-bar");
+
+ctx.register.dispose(
+  statusBar.addItem({
+    id: "my-plugin.sync",
+    text: "↑ 3 unsynced",
+    icon: "cloud-arrow-up",
+    onClick: () => ctx.commands.run("my-plugin.sync-now"),
+  })
+);
+```
+
+<Card title="Source" icon="github" href="https://github.com/zorid-app/Zorid/blob/main/docs/core-plugins/06-status-bar.md">
+  Full status-bar plan on GitHub.
+</Card>

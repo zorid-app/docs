@@ -51,13 +51,25 @@
           "architecture/kernel-and-plugin-host",
           "architecture/plugin-manifest",
           "architecture/storage-model",
-          "architecture/index-schema"
+          "architecture/index-schema",
+          "architecture/fields-and-types",
+          "architecture/zbase-schema",
+          "architecture/neovim-lazy-comparison",
+          "architecture/adr-0001-api-gated-vertical-architecture"
         ]
       },
       {
         "group": "Core plugins",
         "icon": "puzzle-piece",
-        "pages": []
+        "pages": [
+          "core-plugins/contract",
+          "core-plugins/file-explorer",
+          "core-plugins/search",
+          "core-plugins/tags",
+          "core-plugins/status-bar",
+          "core-plugins/fields",
+          "core-plugins/data-views"
+        ]
       }
     ]
   },

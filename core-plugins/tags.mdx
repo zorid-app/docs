@@ -1,0 +1,23 @@
+---
+title: "Tags"
+description: "Tag panel with counts and filtering."
+icon: "tags"
+---
+
+The tags plugin shows all tags discovered in the vault with their occurrence counts and lets users filter notes by tag.
+
+## v0 scope
+
+- List of tags from both inline (`#project`) and frontmatter (`tags: [project]`) sources.
+- Counts per tag.
+- Click a tag to filter the file explorer or open a search result.
+- Nested tag display (`#project/zorid` shows under `#project`).
+
+## Platform APIs used
+
+- `metadata.listTags()` and `metadata.getFilesForTag(tag)`.
+- `workspace.openView` to drive filtered listings.
+
+<Card title="Source" icon="github" href="https://github.com/zorid-app/Zorid/blob/main/docs/core-plugins/05-tags.md">
+  Full tags plan on GitHub.
+</Card>

@@ -1,0 +1,30 @@
+---
+title: "File explorer"
+description: "Tree-based vault navigation in the left sidebar."
+icon: "folder-tree"
+---
+
+The file explorer renders the vault as a tree of folders and files in the primary left sidebar. It is the default way users navigate a vault.
+
+## v0 scope
+
+- Tree view of folders and Markdown files.
+- Open file in active pane (single click) and new tab (modifier-click).
+- Create / rename / delete / move via context menu (delegates to `vault` Platform API).
+- Drag-and-drop reorder and move.
+- Reveal active file.
+- Filtering: hide dotfiles and `.zorid/` internals by default; toggle to show.
+
+## Platform APIs used
+
+- `vault.*` for file system operations and watching.
+- `workspace.openFile`, `workspace.openView` for navigation.
+- `events.on('vault:changed')` to refresh the tree.
+
+## Activation
+
+Lazy-loaded when the file explorer view is opened, or when its commands are invoked from the command palette. Bundled visibility (sidebar slot reservation) is done by the desktop / mobile shell.
+
+<Card title="Source" icon="github" href="https://github.com/zorid-app/Zorid/blob/main/docs/core-plugins/01-file-explorer.md">
+  Full file-explorer plan on GitHub.
+</Card>

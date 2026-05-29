@@ -1,0 +1,45 @@
+---
+title: "ADR 0001: API-gated vertical architecture"
+description: "Why Zorid splits packages by vertical and gates them behind typed Platform APIs."
+icon: "file-contract"
+---
+
+**Status:** Accepted · **Date:** 2026-05-27
+
+## Context
+
+Zorid needs to support:
+
+- Parallel development across many domain areas (vault, workspace, editor, metadata, plugin host, shells).
+- A stable third-party plugin API down the road.
+- Two app shells (desktop Electron, mobile Capacitor) that must share most logic but differ in UX.
+- Eventual Rust/WASM acceleration behind the same indexing contract.
+
+## Decision
+
+Organize the monorepo by **vertical domain** (vault, workspace, editor, metadata, object-store, index, plugin-api, plugin-host) and **gate each vertical behind a typed Platform API package**. Shells, apps, and plugins only depend on those gated APIs — never on a vertical's internals.
+
+```text
+apps -> shell packages -> platform APIs -> internals
+plugins/core -> plugin-api + platform APIs (never internals)
+platform packages must not import Vue shell packages
+third-party plugin API must not expose Vue internals
+```
+
+## Consequences
+
+**Positive**
+
+- Internals can refactor freely as long as the gated API stays stable.
+- The same plugin API works on desktop and mobile.
+- Rust acceleration can drop in behind `IndexEngine` without changing callers.
+- Plugin sandboxing and capability declarations become natural.
+
+**Trade-offs**
+
+- More packages = more bookkeeping (pnpm workspace, tsconfig references, build wiring).
+- Some short-term ergonomic friction for core plugins that need a feature the public API doesn't expose yet. Mitigation: add a narrow Platform API or temporary explicit bridge, document the gap, avoid generic `ctx.internal`.
+
+<Card title="Source" icon="github" href="https://github.com/zorid-app/Zorid/blob/main/docs/architecture/adr-0001-api-gated-vertical-architecture.md">
+  Read the full ADR on GitHub.
+</Card>

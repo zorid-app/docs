@@ -1,0 +1,47 @@
+---
+title: "Data views"
+description: "Renders .zbase view bases (table, list, and plugin-contributed renderers)."
+icon: "table"
+---
+
+The Data Views plugin is responsible for parsing, validating, and rendering `.zbase` files — both as standalone tabs and as embedded blocks inside Markdown.
+
+Like Fields, it is designed to be an **extension platform**: plugins can register namespaced renderer types (e.g. `charts.bar`, `acme.matrix`).
+
+## v0 scope
+
+- Parse and validate `.zbase` YAML against the v0 schema.
+- Evaluate the v0 filter expression language against indexed file records.
+- Apply `sort` and `groupBy`.
+- Render core view types: **`table`** and **`list`** (v0 implementation scope).
+- Show a "not implemented yet" placeholder for `kanban`, `calendar`, `timeline`.
+- Show a "renderer missing" placeholder for unknown plugin types without breaking other views.
+- Embedded `.zbase` rendering via `![[path/to/base.zbase]]` in Markdown.
+- Open `.zbase` as a standalone tab from the file explorer.
+
+## Renderer registration API
+
+```ts
+const views = await ctx.plugins.getApi("zorid.core.data-views");
+
+ctx.register.dispose(
+  views.registerRenderer({
+    type: "charts.bar",
+    mount(container, props, viewCtx) {
+      // props: { rows, view, filters, sort, groupBy, baseId }
+      // viewCtx: events, theme, dispose
+      return () => {};
+    },
+  })
+);
+```
+
+Common view fields (`type`, `name`, `filters`, `sort`, `groupBy`) are passed in typed `props`; renderer-specific config is passed as `props.view.config` (matching `config_json` in the index).
+
+## Filter evaluation
+
+Filters are parsed to AST by Data Views and evaluated against `metadata` query results. **No `eval` or `new Function`.** See [.zbase schema & filter grammar](/architecture/zbase-schema) for the language reference.
+
+<Card title="Source" icon="github" href="https://github.com/zorid-app/Zorid/blob/main/docs/core-plugins/08-data-views.md">
+  Full Data Views plan on GitHub.
+</Card>

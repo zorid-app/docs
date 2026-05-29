@@ -1,0 +1,38 @@
+---
+title: "Fields"
+description: "Renders typed frontmatter field editors and resolves .ztype Types."
+icon: "table-list"
+---
+
+The Fields plugin is responsible for rendering the **typed field group** above (or beside) Markdown content and for resolving `.ztype` Types via the Type registry.
+
+It is one of two core plugins (with Data Views) intended to become an **extension platform** — other plugins can register custom field editors and contribute Types.
+
+## v0 scope
+
+- Read `.zorid/types/*.ztype` and build the Type registry.
+- Resolve `zorid.type` in active note frontmatter.
+- Render a labeled field group with Type-aware editors: `select`, `multiselect`, `date`, `datetime`, `string`, `int`, `float`, `boolean`.
+- Preserve unknown / ad-hoc fields and show them in a separate "Other fields" section.
+- Write frontmatter updates back to the Markdown file atomically.
+- Surface validation warnings instead of silently deleting invalid values.
+
+## Public API (for other plugins)
+
+```ts
+const fields = await ctx.plugins.getApi("zorid.core.fields");
+
+ctx.register.dispose(
+  fields.registerEditor({
+    type: "my-plugin.color",
+    mount(container, value, onChange) {
+      /* render a color picker */
+      return () => {};
+    },
+  })
+);
+```
+
+<Card title="Source" icon="github" href="https://github.com/zorid-app/Zorid/blob/main/docs/core-plugins/07-fields.md">
+  Full Fields plugin plan on GitHub.
+</Card>

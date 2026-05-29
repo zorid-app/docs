@@ -1,0 +1,38 @@
+---
+title: "Search"
+description: "Full-text and field-aware search over the SQLite-backed index."
+icon: "magnifying-glass"
+---
+
+The search plugin provides global search across Markdown content, frontmatter fields, tags, and file paths, backed by the SQLite index.
+
+## v0 scope
+
+- Full-text content search.
+- Path / filename filters.
+- Tag filters (`#project`).
+- Field filters (`status:todo`, `priority:high`).
+- `zorid.type:task` filter on typed files.
+- Result preview with match highlighting.
+- Open result in active pane / new tab.
+
+## Query syntax (v0)
+
+```text
+sync conflict           # plain content search
+status:todo             # field equality
+priority:high status:todo
+#project                # tag
+path:"Projects/Zorid"   # path contains
+zorid.type:task         # typed files only
+```
+
+## Platform APIs used
+
+- `metadata.search` over the SQLite index.
+- `workspace.openFile` to navigate to results.
+- `commands` to register the search command and palette entry.
+
+<Card title="Source" icon="github" href="https://github.com/zorid-app/Zorid/blob/main/docs/core-plugins/02-search.md">
+  Full search plan on GitHub.
+</Card>
