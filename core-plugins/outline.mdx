@@ -1,0 +1,31 @@
+---
+title: "Outline"
+description: "The outline core plugin shows headings and structural blocks for the active note and lets you click a heading to jump to it in the editor."
+icon: "list-tree"
+sidebarTitle: "Outline"
+---
+
+The outline plugin renders the active note's headings (and later, structural blocks) in a navigable side panel.
+
+## v0 scope
+
+- Outline panel listing headings for the active note.
+- Click a heading to navigate the editor to it.
+- Optional block IDs and custom blocks once the fields and data-view primitives exist.
+- Updates on editor changes and index updates.
+
+## Platform APIs used
+
+- `EditorAPI` to read heading positions and drive navigation.
+- `MetadataAPI` for indexed heading and block data.
+- `WorkspaceAPI` to mount the outline view.
+
+## Acceptance criteria
+
+- The outline updates without forcing the full editor into Vue state.
+- Large documents remain responsive.
+- The outline can be hidden or replaced like other core plugin surfaces.
+
+<Card title="Source" icon="github" href="https://github.com/zorid-app/Zorid/blob/main/docs/core-plugins/04-outline.md">
+  Full outline plan on GitHub.
+</Card>

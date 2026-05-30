@@ -1,0 +1,32 @@
+---
+title: "Backlinks"
+description: "The backlinks core plugin shows inbound links and unresolved references for the active note, sourced from the SQLite index and updated as the vault changes."
+icon: "link"
+sidebarTitle: "Backlinks"
+---
+
+The backlinks plugin renders inbound links and unresolved references for the active note in a sidebar panel.
+
+## v0 scope
+
+- Backlinks panel for the active file.
+- Each entry lists the linking note, a heading/context snippet, and the link text.
+- Updates when the active file changes.
+- Updates after index changes.
+- Unresolved links are shown separately when useful.
+
+## Platform APIs used
+
+- `MetadataAPI` for resolved and unresolved link records.
+- `WorkspaceAPI` to navigate to source notes and locations.
+- `EventBus` to react to active-file and index-update events.
+
+## Acceptance criteria
+
+- Backlinks are derived from the SQLite index, not ad-hoc file scans.
+- Opening a backlink navigates to the source note and location.
+- The panel stays responsive for large backlink sets via virtualization or pagination.
+
+<Card title="Source" icon="github" href="https://github.com/zorid-app/Zorid/blob/main/docs/core-plugins/03-backlinks.md">
+  Full backlinks plan on GitHub.
+</Card>

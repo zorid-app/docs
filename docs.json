@@ -65,6 +65,8 @@
           "core-plugins/contract",
           "core-plugins/file-explorer",
           "core-plugins/search",
+          "core-plugins/backlinks",
+          "core-plugins/outline",
           "core-plugins/tags",
           "core-plugins/status-bar",
           "core-plugins/fields",
